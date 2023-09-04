@@ -1,10 +1,13 @@
 #!/usr/bin/python3
 
+# this script dynamically injects profiling code at kernel locations in alpaka src code
+
 import subprocess
 import os
 import sys
 import re
 
+# if kernel name is within a namespace and/or template notation extract it alone
 def extract_tl_function(single_function_string):
     if "::" in single_function_string:
         parts = single_function_string.split("::")
@@ -19,7 +22,7 @@ def extract_tl_function(single_function_string):
     
     return function_name
 
-
+# return idx of nth occurence of character
 def nth_occ_idx(input_string, target_char, n):
     start_idx = -1
     for _ in range(n):
@@ -32,11 +35,15 @@ def nth_occ_idx(input_string, target_char, n):
 # returns line numbers that contain kernel calls
 def get_lines(file):
 
+    # if the file does not contain a kernel call skip it
     try:
+        # in pixeltrack alpaka::enqueue() is used to launch kernels
         output = subprocess.check_output(['grep', '-n', 'alpaka::enqueue(', file])
     except:
         #print(file, "does not contain a kernel call, skipping file")
         exit()
+
+    # extract line numbers from grep output
     regex = r"\d+:"
     instances = re.findall(regex, str(output))
     
@@ -64,7 +71,7 @@ alpaka::enqueue(
           alpaka::createTaskKernel<TAcc>(workDiv, multiBlockPrefixScanFirstStep<uint32_t>(), poff, poff, num_items));
 """
 
-# this function is not being used
+# finds kernel name recursively when 1 alpaka::enqueue() is written in multiple lines <not used>
 def find_kernel(contents, idx, comma, concat):
     print('~')
     line = contents[idx-1]
@@ -89,23 +96,26 @@ def dictify(file, lines):
 
     kernels = {}
 
-    #if file == "/data/user/aalobaid/pixeltrack-standalone/src/alpaka/AlpakaCore/CachingAllocator.h":
-        #return {}
 
     print(file, ": \n")
     for l in lines:
         idx = int(l)
         line = contents[idx - 1]
-        
+
+        # as long as alpaka::enqueue(); is not in one line, keep adding trailing lines to construct the whole line and then extract kernel name
         while "));" not in line and ");" not in line:
             idx += 1
             line += contents[idx - 1]
-        
+
+        # suporting kernels that are explicitly called with alpaka::createTaskKernel
         if "alpaka::createTaskKernel" not in line:
             continue
 
+        # remove \n and whitespace
         line = line.strip().replace('\n','').replace(' ','')
+        # the kernel name is between the second and third comma    
         line = line[nth_occ_idx(line, ',', 2) + 1: nth_occ_idx(line, ',', 3)]
+        # remove namepsaces and template notation from kernel name
         line = extract_tl_function(line)
         print(line) 
         print("~~~")
@@ -113,11 +123,8 @@ def dictify(file, lines):
         # skip irregural kernel calls eg. enqueue(*(..), *(..)); // CachingAllocator.h 194
         #if "block.queue" in line or "[" in line or "*event_" in line or "*data.m_event" in line:
             #continue
-        
-        #if line.count(',') != 5:
-            #continue
-        
-        #kernels[line[nth_occ_idx(line, ',', 2)+1: nth_occ_idx(line, ',', 3)]] = (int(l), idx)
+
+        # tuple (start, end): start of the function, end of the function
         kernels[line] = (int(l), idx)
 
     return kernels
@@ -147,15 +154,18 @@ for k in kernels:
     lines = get_lines(file)
     kernels = dictify(file, lines)
 
-# start by making the variables
+    # start by making the variables
     #print("variables phase")    
-    # auto kernel_start = ...;
+
+    # kernel name
     kernel = k[:-2] if ('<' not in k) else k[:nth_occ_idx(k, '<', 1)]
-    #print(file, ": \n", kernel)
+
+    # auto kernel_start = ...;
     start = "auto " + f"{kernel}_start" + " = std::chrono::high_resolution_clock::now();\n"
 
     # auto kernel_end = ...;
     end = "auto " + f"{kernel}_end" + " = std::chrono::high_resolution_clock::now();\n"
+    
     # alpaka wait function
     wait = "alpaka::wait(queue);\n"
 
@@ -200,17 +210,3 @@ for k in kernels:
 
     # flag the kernel as done
     done.append(k)
-
-
-"""
-    print(k, ":")
-    print("start: ", start)
-    print("end: ", end)
-    print("wait: ", wait)
-    print("diff: ", diff)
-    print("kernel_line: ", kernel_line)
-    print("file_op: ", file_op)
-    print()
-    print()
-"""
-
