@@ -6,7 +6,7 @@ from os import listdir
 from os.path import isfile, join
 import sys
 
-
+# returns string between two characters used for `
 def get_str_between(string, first_char, second_char):
   """Returns the string between the two specified characters in the given string.
 
@@ -25,10 +25,7 @@ def get_str_between(string, first_char, second_char):
     return ""
   return string[start_index + 1:end_index]
 
-def to_seconds(micro):
-    return micro / 1000000
-
-
+# returns avg and stdev for cpu utilization and throughput
 def get_stats(filename):
 
     # get readings of the file
@@ -45,7 +42,7 @@ def get_stats(filename):
     readings_t = []
     readings_u = []
 
-    # for each line on the form "throughput utilization"
+    # for each line on the form "<throughput> <utilization>"
     for r in readings:
         arr = r.split()
 
@@ -55,22 +52,22 @@ def get_stats(filename):
         readings_t.append(float(arr[0]))
         readings_u.append(float(arr[1]))
 
-
-
+    # avg and stdev for throughput
     avg_t = (throughput / len(readings)) 
     stdev_t = statistics.stdev(readings_t)
     
+    # avg and stdev for utilization  
     avg_u = (utilization / len(readings)) 
     stdev_u = statistics.stdev(readings_u)
 
     # return (avg_t, avg_u, stdev_t, stdev_u)
     return (avg_t, avg_u, stdev_t, stdev_u)
 
-# for each file write to the csv size, time, standard deviation, backend
 
 backends = ["serial", "tbb", "cuda", "hip"]
 txtfiles = [f for f in listdir('./') if ( isfile(join('./', f)) and f.endswith('.txt') ) ]
 
+# create and setup csv files
 for b in backends:
     csv = open(f"{b}.csv", "w")
     csv.truncate()
@@ -97,15 +94,11 @@ for f in txtfiles:
 
     lines[backend].append((threads, f"{threads},{avg_t},{avg_u},{stdev_t},{stdev_u}\n"))
 
+print(lines)
 
-
+# as extra sort lines before writing to csv
 def sort_lines(lines):
-
-    lines_c = lines
-
-    min_ 
-
-
+    pass
 
 
 
