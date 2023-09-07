@@ -23,15 +23,15 @@ def max_arr(arrays):
 
 # read data
     # constant
-cpu  = pd.read_csv("./increasing_blocks_8x8_blocksize/cpu.csv")
-tbb  = pd.read_csv("./increasing_blocks_8x8_blocksize/tbb.csv")
-mt   = pd.read_csv("./increasing_blocks_8x8_blocksize/mt.csv")
-cuda = pd.read_csv("./increasing_blocks_8x8_blocksize/cuda.csv")
+cpu  = pd.read_csv("./increasing_blocks_8x8_blocksize_csv/cpu.csv")
+tbb  = pd.read_csv("./increasing_blocks_8x8_blocksize_csv/tbb.csv")
+mt   = pd.read_csv("./increasing_blocks_8x8_blocksize_csv/mt.csv")
+cuda = pd.read_csv("./increasing_blocks_8x8_blocksize_csv/cuda.csv")
     # 8x8
-cpu8  = pd.read_csv("./8x8_blocks_8x8_threads/cpu.csv")
-tbb8  = pd.read_csv("./8x8_blocks_8x8_threads/tbb.csv")
-mt8   = pd.read_csv("./8x8_blocks_8x8_threads/mt.csv")
-cuda8 = pd.read_csv("./8x8_blocks_8x8_threads/cuda.csv")
+cpu8  = pd.read_csv("./8x8_blocks_8x8_threads_csv/cpu.csv")
+tbb8  = pd.read_csv("./8x8_blocks_8x8_threads_csv/tbb.csv")
+mt8   = pd.read_csv("./8x8_blocks_8x8_threads_csv/mt.csv")
+cuda8 = pd.read_csv("./8x8_blocks_8x8_threads_csv/cuda.csv")
 
 
 # extract data
@@ -224,16 +224,6 @@ ax4.legend()
 ax2.yaxis.set_tick_params(labelleft=True)   # shows lables on the second plot
 ax4.yaxis.set_tick_params(labelleft=True)   # shows lables on the second plot
 
-
-
-# calculate performance
-print("Performance difference from cpu to tbb: \nUsing equation: (end - start)/start * 100 \nHowever we invert the percentage because of time \n")
-perf = 0
-for i in range(len(cpuTime)):
-
-    perf = ((tbbTime[i] - cpuTime[i]) / cpuTime[i]) * 100
-    print("size < ", cpuSize[i], " >: ", int(perf)*-1, "%")
-######
 
 # plot horizontal lines on the ticks for the linear scale
 lbs = [ 10**i for i in range(2,9) ]
