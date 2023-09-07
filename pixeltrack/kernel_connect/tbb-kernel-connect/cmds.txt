@@ -1,0 +1,3 @@
+src/alpaka/plugin-PixelTriplets/alpaka/CAHitNtupletGeneratorKernels.cc
+sed -i "s/thresh-128/thresh-1024/g" spixelrun.sh 
+
