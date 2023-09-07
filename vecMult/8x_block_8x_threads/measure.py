@@ -6,6 +6,9 @@ from os import listdir
 from os.path import isfile, join
 import sys
 
+
+# AccCpuThreads_4096x4096_by_4096x4096_8.txt
+
 # convert microseconds to seconds
 def to_seconds(micro):
     return micro / 1000000

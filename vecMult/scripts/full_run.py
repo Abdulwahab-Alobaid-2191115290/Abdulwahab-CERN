@@ -6,6 +6,8 @@ import sys
 from os import listdir
 from os.path import isfile, join
 
+# runs all backends then generates csv files using measure.py
+
 run = "./run.py"
 measure = "./measure.py"
 times = "10"

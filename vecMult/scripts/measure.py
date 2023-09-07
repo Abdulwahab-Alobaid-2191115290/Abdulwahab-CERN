@@ -9,6 +9,7 @@ import sys
 def to_seconds(micro):
     return micro / 1000000
 
+# generate  { backend: [list, of, txt, files], ..}
 def file_dict():
     dirs = ["./tbb", "./cpu", "./mt", "./cuda"]
 
@@ -19,6 +20,7 @@ def file_dict():
         
     return f_dict
 
+# calculate avg and standard deviation
 def avg_stdev(filename):
 
     # get readings of the file
