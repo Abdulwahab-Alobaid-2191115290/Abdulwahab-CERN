@@ -9,7 +9,7 @@ Its aim is to provide performance portability across accelerators through the ab
 ![alpaka](https://github.com/alpaka-group/alpaka/blob/develop/docs/logo/alpaka_401x135.png)
 
 ## Abstract
-The work is focused on analyzing how different backends behave within Alpaka, with emphasis on cpu backends such as CpuSerial, MT and Intel TBB. Analysis was carried on matrix multiplication problem first to analyze how these backends behave differently. After that, the work has been extended on the standalone version of [Pixeltrack](https://github.com/cms-patatrack/pixeltrack-standalone) application to address irregularities in CpuSerial and Intel TBB backends behavior within different modules of the application.
+The workwas focused on analyzing how different backends behave within Alpaka, with emphasis on cpu backends such as CpuSerial, MT and Intel TBB. Analysis was carried on matrix multiplication problem first to analyze how these backends behave differently. After that, work has been scaled to the standalone version of [Pixeltrack](https://github.com/cms-patatrack/pixeltrack-standalone) application to address irregularities in CpuSerial and Intel TBB backends behavior within different modules/kernels of the application.
 
 ## File Organization
 
@@ -22,7 +22,7 @@ The work is focused on analyzing how different backends behave within Alpaka, wi
     
     - [pixeltrack-threads](pixeltrack/threads-pixeltrack): Tests carried on the backends while changing `numberOfThreads` only.
     
-    - [pixeltrack-scripts](pixeltrack/pixeltrack-scripts): Scripts used while doing the analysis including `parse.py` which injects profiling code into the source code of pixeltrack.
+    - [pixeltrack-scripts](pixeltrack/pixeltrack-scripts): Scripts used while doing the analysis including `parse.py` which dynamically injects profiling code into the source code of pixeltrack.
   
 
 2. [vecMult](vecMult)
